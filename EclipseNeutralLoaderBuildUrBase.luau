@@ -25,7 +25,12 @@ local ModeDropdown = LoaderTab:CreateDropdown({
     MultipleOptions = false,
     Flag = "ModeDropdown",
     Callback = function(Value)
-        SelectedMode = Value
+        -- Rayfield sometimes returns table even when MultipleOptions = false
+        if typeof(Value) == "table" then
+            SelectedMode = Value[1]
+        else
+            SelectedMode = Value
+        end
     end
 })
 
@@ -40,7 +45,9 @@ LoaderTab:CreateButton({
                 Duration = 5
             })
             task.wait(1)
-            game.CoreGui:FindFirstChild("RayfieldMain"):Destroy()
+            if game.CoreGui:FindFirstChild("RayfieldMain") then
+                game.CoreGui:FindFirstChild("RayfieldMain"):Destroy()
+            end
             
         elseif SelectedMode == "Beta" then
             loadstring(game:HttpGet("https://raw.githubusercontent.com/PresidentYoutubes/ECLIPSE_NEUTRAL.Loader/refs/heads/main/Eclipse%20%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%88%E3%83%A9%E3%83%AB%E3%83%99%E3%83%BC%E3%82%BF.luau"))()
@@ -50,7 +57,10 @@ LoaderTab:CreateButton({
                 Duration = 5
             })
             task.wait(1)
-            game.CoreGui:FindFirstChild("RayfieldMain"):Destroy()
+            if game.CoreGui:FindFirstChild("RayfieldMain") then
+                game.CoreGui:FindFirstChild("RayfieldMain"):Destroy()
+            end
+
         else
             game.StarterGui:SetCore("SendNotification", {
                 Title = "Eclipse Neutral Loader",
