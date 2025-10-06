@@ -33,7 +33,7 @@ LoaderTab:CreateButton({
     Name = "Load Eclipse Neutral",
     Callback = function()
         if SelectedMode == "Normal" then
-            loadstring(game:HttpGet("Manual_Put"))()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/PresidentYoutubes/ECLIPSE_NEUTRAL.Loader/refs/heads/main/%E6%97%A5%E9%A3%9F%E4%B8%AD%E7%AB%8B%E9%80%9A%E5%B8%B8.luau"))()
             game.StarterGui:SetCore("SendNotification", {
                 Title = "Eclipse Neutral",
                 Text = "Normal Loaded . . .",
