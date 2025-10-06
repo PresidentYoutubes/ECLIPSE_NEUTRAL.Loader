@@ -1,4 +1,4 @@
--- [v1] Build Ur Base 🏠
+-- [BETA] Build Ur Base 🏠
 -- Rayfield UI 
 -- By President 444 YT
 
@@ -101,7 +101,7 @@ local function AutoAttackWeapons()
     end
 end
 
--- Fast Interval (even faster firing)
+-- No Interval (ultra fast but safe)
 local function FastInterval()
     runningFast = true
     local args = { [1] = true }
@@ -109,13 +109,13 @@ local function FastInterval()
         pcall(function()
             game:GetService("ReplicatedStorage").Remotes.Events.ToolState:FireServer(unpack(args))
         end)
-        -- no wait at all for maximum speed
+        task.wait(0.01) -- ultra fast (100x per second) but prevents freeze
     end
 end
 
--- Toggle 1: Auto Attack Zombies
+-- Toggle 1: Auto Attack (Melee)
 Main:CreateToggle({
-    Name = "Auto Attacked (Melee) ✅",
+    Name = "Auto Attack (Melee) ✅",
     CurrentValue = false,
     Flag = "AutoAttackZombies",
     Callback = function(Value)
@@ -145,7 +145,7 @@ Main:CreateToggle({
     end
 })
 
--- Toggle 3: Fast Interval
+-- Toggle 3: No Interval (Use with Auto Attack Melee)
 Main:CreateToggle({
     Name = "No Interval (Use with Auto Attack Melee) ✅",
     CurrentValue = false,
