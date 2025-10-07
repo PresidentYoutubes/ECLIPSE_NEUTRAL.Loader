@@ -1,25 +1,28 @@
--- [v1] Build Ur Base 🏠
+-- [V2] Build Ur Base 🏠
 -- Rayfield UI 
 -- By President 444 YT
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "[v1] Build Ur Base 🏠",
-    LoadingTitle = "[v1] Build Ur Base",
+    Name = "[V2] Build Ur Base 🏠",
+    LoadingTitle = "[V2] Build Ur Base",
     LoadingSubtitle = "By President 444 YT",
     ConfigurationSaving = { Enabled = false },
     Discord = { Enabled = false },
 })
 
--- Create Main tab
+-- Create Tabs
 local Main = Window:CreateTab("Main")
+local Event = Window:CreateTab("Event ✨")
 
 -- Variables
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local runningZombies = false
 local runningWeapons = false
+local runningFast = false
+local runningPinata = false
 
 -- Helpers
 local function GetChar()
@@ -54,18 +57,16 @@ local function GetPlayerPlot()
     return nil
 end
 
-local function TeleportToZombie(z)
+local function TeleportTo(target)
     local char = GetChar()
     local hrp = char:FindFirstChild("HumanoidRootPart")
-    if not hrp then return end
-
-    local zPart = z:FindFirstChild("HumanoidRootPart") or z:FindFirstChildWhichIsA("BasePart")
-    if not zPart then return end
-
-    hrp.CFrame = zPart.CFrame + Vector3.new(0, 3, 0)
+    if not hrp or not target then return end
+    local tPart = target:FindFirstChild("HumanoidRootPart") or target:FindFirstChildWhichIsA("BasePart")
+    if not tPart then return end
+    hrp.CFrame = tPart.CFrame + Vector3.new(0, 3, 0)
 end
 
--- Auto Attack Zombies Loop
+-- Auto Attack Zombies
 local function AutoAttackZombies()
     runningZombies = true
     while runningZombies do
@@ -77,7 +78,7 @@ local function AutoAttackZombies()
                     if not runningZombies then break end
                     if Enemy:IsA("Model") and Enemy:FindFirstChild("Humanoid") then
                         repeat
-                            TeleportToZombie(Enemy)
+                            TeleportTo(Enemy)
                             task.wait(0.15)
                         until not runningZombies or not Enemy.Parent
                     end
@@ -88,7 +89,7 @@ local function AutoAttackZombies()
     end
 end
 
--- Auto Attack (Weapons) Loop
+-- Auto Attack (Weapons)
 local function AutoAttackWeapons()
     runningWeapons = true
     local args = { [1] = true }
@@ -96,13 +97,40 @@ local function AutoAttackWeapons()
         pcall(function()
             game:GetService("ReplicatedStorage").Remotes.Events.ToolState:FireServer(unpack(args))
         end)
-        task.wait() -- fires continuously, nearly no interval
+        task.wait() -- small wait to prevent overload
     end
 end
 
--- Toggle 1: Auto Attack Zombies
+-- No Interval (ultra fast but safe)
+local function FastInterval()
+    runningFast = true
+    local args = { [1] = true }
+    while runningFast do
+        pcall(function()
+            game:GetService("ReplicatedStorage").Remotes.Events.ToolState:FireServer(unpack(args))
+        end)
+        task.wait(0.01) -- ultra fast (100x per second) but safe
+    end
+end
+
+-- Auto Defeat Pinata Boss
+local function AutoDefeatPinata()
+    runningPinata = true
+    while runningPinata do
+        local enemies = workspace:FindFirstChild("Enemies")
+        if enemies then
+            local pinata = enemies:FindFirstChild("PinataGuy")
+            if pinata then
+                TeleportTo(pinata)
+            end
+        end
+        task.wait(0.15)
+    end
+end
+
+-- Toggle 1: Auto Attack (Melee)
 Main:CreateToggle({
-    Name = "Auto Attack Zombies (Melee) ✅",
+    Name = "Auto Attack (Melee) ✅",
     CurrentValue = false,
     Flag = "AutoAttackZombies",
     Callback = function(Value)
@@ -124,11 +152,42 @@ Main:CreateToggle({
             task.spawn(AutoAttackWeapons)
         else
             runningWeapons = false
-            -- when turned off, fire the disable once
             local args = { [1] = false }
             pcall(function()
                 game:GetService("ReplicatedStorage").Remotes.Events.ToolState:FireServer(unpack(args))
             end)
+        end
+    end
+})
+
+-- Toggle 3: No Interval (Use with Auto Attack Melee)
+Main:CreateToggle({
+    Name = "No Interval (Use with Auto Attack Melee) ✅",
+    CurrentValue = false,
+    Flag = "FastInterval",
+    Callback = function(Value)
+        if Value then
+            task.spawn(FastInterval)
+        else
+            runningFast = false
+            local args = { [1] = false }
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.Events.ToolState:FireServer(unpack(args))
+            end)
+        end
+    end
+})
+
+-- Event Tab Toggle: Auto Defeat Pinata Boss
+Event:CreateToggle({
+    Name = "Auto Defeat Pinata Boss ✅",
+    CurrentValue = false,
+    Flag = "AutoDefeatPinata",
+    Callback = function(Value)
+        if Value then
+            task.spawn(AutoDefeatPinata)
+        else
+            runningPinata = false
         end
     end
 })
