@@ -1,0 +1,1 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/PresidentYoutubes/ECLIPSE_NEUTRAL.Loader/refs/heads/main/EclipseNeutralLoaderBuildUrBase.luau"))()
